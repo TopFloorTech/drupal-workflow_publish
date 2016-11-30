@@ -1,10 +1,10 @@
 {
     "name": "drupal/workflow_publish",
-    "description": "Automatically publishes and unpublishes entities based on Workflow state.",
+    "description": "Workflow Publish",
     "type": "drupal-module",
     "license": "GPL-2.0+",
     "require": {
-        "drupal/workflow": "~1.0 || ~8.1.0",
-        "drupal/aluminum_storage": "~1.0 || ~8.1.0"
+        "drupal/workflow": "~1.0 || ~8.1.0 || 1.x-dev",
+        "drupal/aluminum_storage": "dev-8.x-1.x"
     }
 }
