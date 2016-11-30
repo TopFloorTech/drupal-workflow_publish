@@ -1,0 +1,10 @@
+name: 'Workflow Publish'
+description: 'Automatically publishes and unpublishes entities based on Workflow state.'
+package: Workflow
+type: module
+core: 8.x
+version: 8.x-1.x-dev
+
+dependencies:
+  - workflow
+  - aluminum_storage

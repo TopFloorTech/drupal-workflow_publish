@@ -1,0 +1,72 @@
+<?php
+use Drupal\aluminum_storage\Aluminum\Config\ConfigManager;
+use Drupal\Core\Entity\ContentEntityInterface;
+use Drupal\Core\Entity\EntityInterface;
+
+/**
+ * Implements hook_entity_presave().
+ */
+function workflow_publish_entity_presave(EntityInterface $entity) {
+  $config = ConfigManager::getConfig('admin');
+  $fieldName = $config->getValue('workflow_publish_field', 'workflow');
+  $publishedStates = $config->getValue('workflow_publish_published_states', 'workflow', []);
+
+  if (is_null($fieldName)) {
+    return;
+  }
+
+  // Only handle content entities that have a Workflow field
+  if (($entity instanceof ContentEntityInterface) && ($entity->hasField($fieldName))) {
+    $value = $entity->get($fieldName)->value;
+    $status = $entity->get('status')->value;
+    $newStatus = in_array($value, $publishedStates);
+
+    if ($status != $newStatus) {
+      $entity->get('status')->setValue($newStatus);
+    }
+  }
+}
+
+/**
+ * Implements hook_aluminum_vault_groups().
+ */
+function workflow_publish_aluminum_storage_groups() {
+  $groups = [];
+
+  $groups['admin.workflow'] = [
+    'name' => 'Workflow',
+    'weight' => 0,
+  ];
+
+  return $groups;
+}
+
+/**
+ * Implements hook_aluminum_vault_config().
+ */
+function workflow_publish_aluminum_storage_items() {
+  $config = [];
+
+  $config['workflow_publish_field'] = [
+    'name' => 'Workflow field',
+    'description' => 'The machine name of the workflow field to use for publishing status.',
+    'groupId' => 'admin.workflow',
+    'defaultValue' => 'field_workflow',
+  ];
+
+  $config['workflow_publish_published_states'] = [
+    'class' => 'Select',
+    'options' => workflow_publish_workflow_states(),
+    'multiple' => TRUE,
+    'name' => 'Published states',
+    'description' => 'Choose the states that should equate to the content being published.',
+    'groupId' => 'admin.workflow',
+    'defaultValue' => [],
+  ];
+
+  return $config;
+}
+
+function workflow_publish_workflow_states() {
+  return workflow_get_workflow_state_names();
+}
