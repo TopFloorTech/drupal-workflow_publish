@@ -1,0 +1,9 @@
+langcode: en
+status: true
+dependencies:
+ module:
+   - workflow_publish
+id: change_product_workflow_state_to_published
+label: 'Change product workflow state to Published'
+type: commerce_product
+plugin: change_product_workflow_state_to_published_action
